@@ -9,6 +9,7 @@ do
         status="UP"
     else
         status="DOWN"
+        echo "⚠️ ALERT: $server is DOWN"
     fi
 
     echo "$server is $status"
