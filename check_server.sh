@@ -12,7 +12,7 @@ do
         echo "⚠️ ALERT: $server is DOWN"
     fi
 
-    echo "$server is $status"
+    echo "[$(date)] $server status: $status"
     echo "$(date) - $server is $status" >> monitor.log
 
 done < servers.txt
