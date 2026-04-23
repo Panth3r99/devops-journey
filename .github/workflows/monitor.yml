@@ -1,0 +1,16 @@
+name: Server Monitor
+
+on: [push]
+
+jobs:
+  check-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run monitoring script
+        run: |
+          chmod +x check_server.sh
+          ./check_server.sh
