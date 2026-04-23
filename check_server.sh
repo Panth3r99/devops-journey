@@ -1,12 +1,17 @@
 #!/bin/bash
 
-echo "Checking server..."
+servers=("google.com" "github.com")
 
-if ping -n 2 google.com > /dev/null
-then
-    echo "$(date) - Server is UP" >> monitor.log
-    echo "Server is UP"
-else
-    echo "$(date) - Server is DOWN" >> monitor.log
-    echo "Server is DOWN"
-fi
+echo "Starting server checks..."
+
+for server in "${servers[@]}"
+do
+    if ping -n 2 $server > /dev/null
+    then
+        echo "$(date) - $server is UP" >> monitor.log
+        echo "$server is UP"
+    else
+        echo "$(date) - $server is DOWN" >> monitor.log
+        echo "$server is DOWN"
+    fi
+done
