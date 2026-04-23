@@ -1,0 +1,55 @@
+🧠 Linux / Git Bash Cheat Sheet (Day 1–2)
+📂 Navigation
+pwd # show current directory
+ls # list files/folders
+ls -l # detailed list
+ls -R # recursive list
+ls foldername # view inside a folder
+cd foldername # go into folder
+cd .. # go back one level
+cd ~ # go to home directory
+
+📁 File & Folder Management
+mkdir foldername # create folder
+touch file.txt # create file
+cp file.txt copy.txt # copy file
+mv file.txt newname.txt # rename file
+mv file.txt foldername/ # move file
+rm file.txt # delete file
+rm -r foldername # delete folder with contents
+rmdir foldername # delete empty folder
+
+📖 Viewing Files
+cat file.txt # show file content
+less file.txt # scrollable view (press q to exit)
+head file.txt # first lines
+tail file.txt # last lines
+
+
+✏️ Writing to Files
+echo "text" > file.txt # overwrite file
+echo "text" >> file.txt # append to file
+
+🔐 Permissions (Conceptual - Git Bash limited)
+ls -l # view permissions
+chmod u+r file.txt # add read to user
+chmod u-r file.txt # remove read from user
+chmod u+w file.txt # add write
+chmod u-w file.txt # remove write
+chmod 000 file.txt # remove all permissions (may not fully work in Git Bash)
+
+⚙️ Helpful Habits
+pwd # always check where you are
+ls # always check what’s there
+
+🔥 Mental Model
+cd = move around
+ls = look around
+mkdir = create space
+touch = create file
+rm = remove
+
+⚡ Notes
+Git Bash simulates Linux (permissions may not behave exactly)
+Commands are case-sensitive (ls ≠ LS)
+No undo for rm ❗
