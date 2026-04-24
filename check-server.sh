@@ -35,7 +35,11 @@ do
     fi
 
     echo "$server is $status"
-    echo "$(date) - $server is $status" >> monitor.log
+    if [ "$status" == "UP" ]; then
+    echo "$(date) - $server is UP" >> success.log
+else
+    echo "$(date) - $server is DOWN" >> error.log
+fi
 
 done < servers.txt
 

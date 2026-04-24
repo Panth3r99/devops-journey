@@ -1,6 +1,9 @@
 name: Docker Server Monitor
 
-on: [push]
+on:
+  push:
+  schedule:
+    - cron: "*/5 * * * *"   # runs every 5 minutes
 
 jobs:
   docker-run:
