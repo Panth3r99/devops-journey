@@ -1,11 +1,11 @@
 FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y iputils-ping curl
+RUN apt-get update && apt-get install -y procps coreutils
 
 WORKDIR /app
 
 COPY . .
 
-RUN chmod +x check_server.sh
+RUN chmod +x system_monitor.sh
 
-CMD ["./check_server.sh"]
+CMD ["./system_monitor.sh"]
