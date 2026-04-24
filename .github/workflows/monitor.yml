@@ -1,16 +1,17 @@
-name: Server Monitor
+name: Docker Server Monitor
 
 on: [push]
 
 jobs:
-  check-server:
+  docker-run:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Run monitoring script
-        run: |
-          chmod +x check_server.sh
-          ./check_server.sh
+      - name: Build Docker image
+        run: docker build -t server-monitor .
+
+      - name: Run Docker container
+        run: docker run server-monitor
