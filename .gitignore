@@ -1,3 +1,4 @@
 monitor.log
 success.log
 error.log
+*.log
