@@ -2,18 +2,18 @@
 
 echo "Starting server checks..."
 
-# Detect OS for ping
-if [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
-    ping_cmd="ping -n 2"
-else
+# Detect ping capability (works across Windows + Linux)
+if ping -c 1 127.0.0.1 > /dev/null 2>&1; then
     ping_cmd="ping -c 2"
+else
+    ping_cmd="ping -n 2"
 fi
 
 failed=0
 
 while read server
 do
-    # Skip empty lines
+    # skip empty lines
     [ -z "$server" ] && continue
 
     # If it's a URL → use curl
@@ -44,7 +44,7 @@ do
 
 done < servers.txt
 
-# Final exit status
+# Exit code for CI pipeline
 if [ $failed -eq 1 ]; then
     exit 1
 else
