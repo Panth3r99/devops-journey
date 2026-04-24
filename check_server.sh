@@ -3,7 +3,7 @@
 echo "Starting server checks..."
 
 # Detect OS for ping
-if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+if [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
     ping_cmd="ping -n 2"
 else
     ping_cmd="ping -c 2"
@@ -13,18 +13,24 @@ failed=0
 
 while read server
 do
-    # If it looks like a URL, use curl
+    # Skip empty lines
+    [ -z "$server" ] && continue
+
+    # If it's a URL → use curl
     if [[ "$server" == http* ]]; then
-        if curl -s --head "$server" | grep "200 OK" > /dev/null
-        then
+        http_code=$(curl -k -s -o /dev/null -w "%{http_code}" "$server")
+
+        if [[ "$http_code" == "200" || "$http_code" == "301" || "$http_code" == "302" ]]; then
             status="UP"
         else
             status="DOWN"
             failed=1
-            echo "ALERT: $server is DOWN"
+            echo "ALERT: $server is DOWN (HTTP $http_code)"
         fi
+
+    # Else → use ping
     else
-        if $ping_cmd "$server" > /dev/null
+        if $ping_cmd "$server" > /dev/null 2>&1
         then
             status="UP"
         else
@@ -35,10 +41,10 @@ do
     fi
 
     echo "$server is $status"
-    echo "$(date) - $server is $status" >> monitor.log
 
 done < servers.txt
 
+# Final exit status
 if [ $failed -eq 1 ]; then
     exit 1
 else
