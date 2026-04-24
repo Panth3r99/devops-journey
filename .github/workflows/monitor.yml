@@ -1,20 +1,27 @@
-name: Docker Server Monitor
+name: DevOps Monitoring Pipeline
 
 on:
   push:
-  schedule:
-    - cron: "*/5 * * * *"   # runs every 5 minutes
 
 jobs:
-  docker-run:
+  network-monitor:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Build Docker image
-        run: docker build -t server-monitor .
+      - name: Build and run network monitor
+        run: |
+          docker build -t server-monitor .
+          docker run server-monitor
 
-      - name: Run Docker container
-        run: docker run server-monitor
+  system-monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build and run system monitor
+        run: |
+          docker build -t system-monitor .
+          docker run system-monitor
