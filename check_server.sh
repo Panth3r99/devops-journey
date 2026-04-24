@@ -29,9 +29,16 @@ do
         fi
 
     # Else → use ping
+    # Else → use ping, fallback to curl
+else
+    if $ping_cmd "$server" > /dev/null 2>&1
+    then
+        status="UP"
     else
-        if $ping_cmd "$server" > /dev/null 2>&1
-        then
+        # fallback using curl
+        http_code=$(curl -k -s -o /dev/null -w "%{http_code}" "http://$server")
+
+        if [[ "$http_code" =~ ^2|3 ]]; then
             status="UP"
         else
             status="DOWN"
@@ -39,6 +46,7 @@ do
             echo "ALERT: $server is DOWN"
         fi
     fi
+fi
 
     echo "$server is $status"
 
