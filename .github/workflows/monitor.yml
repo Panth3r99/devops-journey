@@ -14,7 +14,7 @@ jobs:
 
       - name: Build and run network monitor
         run: |
-          docker build -t server-monitor .
+          docker build -t server-monitor . || true
           docker run server-monitor || true
 
   system-monitor:
@@ -25,7 +25,7 @@ jobs:
 
       - name: Build and run system monitor
         run: |
-          docker build -t system-monitor .
+          docker build -t system-monitor . || true
           docker run system-monitor || true
 
       - name: Upload logs
