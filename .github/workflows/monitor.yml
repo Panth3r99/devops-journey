@@ -2,6 +2,8 @@ name: DevOps Monitoring Pipeline
 
 on:
   push:
+  schedule:
+    - cron: "*/5 * * * *"
 
 jobs:
   network-monitor:
@@ -25,3 +27,9 @@ jobs:
         run: |
           docker build -t system-monitor .
           docker run system-monitor
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: system-monitor-logs
+          path: system_monitor.log
