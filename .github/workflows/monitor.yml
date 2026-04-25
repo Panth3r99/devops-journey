@@ -3,11 +3,17 @@ name: DevOps Monitoring Pipeline
 on:
   push:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/5 * * * *"   # runs every 5 minutes
 
 jobs:
+
   network-monitor:
     runs-on: ubuntu-latest
+
+    # 🔐 Pass GitHub Secrets to script
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
 
     steps:
       - uses: actions/checkout@v4
@@ -17,8 +23,14 @@ jobs:
           docker build -t server-monitor . || true
           docker run server-monitor || true
 
+
   system-monitor:
     runs-on: ubuntu-latest
+
+    # 🔐 Pass GitHub Secrets to script
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
 
     steps:
       - uses: actions/checkout@v4
