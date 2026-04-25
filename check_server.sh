@@ -44,3 +44,4 @@ while read server; do
     fi
 
 done < servers.txt
+exit 0
