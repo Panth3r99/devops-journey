@@ -3,14 +3,13 @@ name: DevOps Monitoring Pipeline
 on:
   push:
   schedule:
-    - cron: "*/5 * * * *"   # runs every 5 minutes
+    - cron: "*/5 * * * *"   # every 5 minutes
 
 jobs:
 
   network-monitor:
     runs-on: ubuntu-latest
 
-    # 🔐 Pass GitHub Secrets to script
     env:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       CHAT_ID: ${{ secrets.CHAT_ID }}
@@ -21,13 +20,15 @@ jobs:
       - name: Build and run network monitor
         run: |
           docker build -t server-monitor . || true
-          docker run server-monitor || true
+          docker run \
+            -e TELEGRAM_TOKEN=$TELEGRAM_TOKEN \
+            -e CHAT_ID=$CHAT_ID \
+            server-monitor || true
 
 
   system-monitor:
     runs-on: ubuntu-latest
 
-    # 🔐 Pass GitHub Secrets to script
     env:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       CHAT_ID: ${{ secrets.CHAT_ID }}
@@ -38,7 +39,10 @@ jobs:
       - name: Build and run system monitor
         run: |
           docker build -t system-monitor . || true
-          docker run system-monitor || true
+          docker run \
+            -e TELEGRAM_TOKEN=$TELEGRAM_TOKEN \
+            -e CHAT_ID=$CHAT_ID \
+            system-monitor || true
 
       - name: Upload logs
         uses: actions/upload-artifact@v4
