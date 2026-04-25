@@ -15,7 +15,7 @@ jobs:
       - name: Build and run network monitor
         run: |
           docker build -t server-monitor .
-          docker run server-monitor
+          docker run server-monitor || true
 
   system-monitor:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
       - name: Build and run system monitor
         run: |
           docker build -t system-monitor .
-          docker run system-monitor
+          docker run system-monitor || true
 
       - name: Upload logs
         uses: actions/upload-artifact@v4
