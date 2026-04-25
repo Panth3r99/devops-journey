@@ -10,8 +10,47 @@ send_alert() {
         -d text="$MESSAGE"
 }
 
-echo "FORCING ALERT TEST..."
+echo "Starting server checks..."
 
-send_alert "🚨 TEST ALERT FROM GITHUB ACTIONS"
+while read server; do
+
+    if [[ $server == http* ]]; then
+
+        status=$(curl -k -o /dev/null -s -w "%{http_code}" \
+          --connect-timeout 10 \
+          --max-time 20 \
+          $server)
+
+        if [ "$status" -eq 200 ]; then
+            echo "$server is UP"
+        else
+            echo "Retrying $server..."
+            sleep 10
+
+            status=$(curl -k -o /dev/null -s -w "%{http_code}" \
+              --connect-timeout 10 \
+              --max-time 20 \
+              $server)
+
+            if [ "$status" -eq 200 ]; then
+                echo "$server is UP (after retry)"
+            else
+                echo "ALERT: $server is DOWN (HTTP $status)"
+                send_alert "🚨 ALERT: $server is DOWN (HTTP $status)"
+            fi
+        fi
+
+    else
+        ping -c 1 $server > /dev/null 2>&1
+
+        if [ $? -eq 0 ]; then
+            echo "$server is UP"
+        else
+            echo "ALERT: $server is DOWN"
+            send_alert "🚨 ALERT: $server is DOWN"
+        fi
+    fi
+
+done < servers.txt
 
 exit 0
