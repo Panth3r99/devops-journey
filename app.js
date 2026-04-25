@@ -3,7 +3,8 @@ const http = require("http");
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
-  res.end("Lizard Lizard Lizard🚀")🦎;
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("🦎 Lizard Lizard Lizard 🦎");
 });
 
 server.listen(PORT, () => {
