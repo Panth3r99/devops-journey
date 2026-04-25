@@ -17,32 +17,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and run network monitor
+      - name: Run network monitor (no Docker)
         run: |
-          docker build -t server-monitor . || true
-          docker run \
-            -e TELEGRAM_TOKEN=$TELEGRAM_TOKEN \
-            -e CHAT_ID=$CHAT_ID \
-            server-monitor || true
+          chmod +x check_server.sh
+          ./check_server.sh || true
 
 
   system-monitor:
     runs-on: ubuntu-latest
 
-    env:
-      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-      CHAT_ID: ${{ secrets.CHAT_ID }}
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and run system monitor
+      - name: Build and run system monitor (Docker)
         run: |
           docker build -t system-monitor . || true
-          docker run \
-            -e TELEGRAM_TOKEN=$TELEGRAM_TOKEN \
-            -e CHAT_ID=$CHAT_ID \
-            system-monitor || true
+          docker run system-monitor || true
 
       - name: Upload logs
         uses: actions/upload-artifact@v4
