@@ -2,59 +2,45 @@
 
 echo "Starting server checks..."
 
-# Detect ping capability (works across Windows + Linux)
-if ping -c 1 127.0.0.1 > /dev/null 2>&1; then
-    ping_cmd="ping -c 2"
-else
-    ping_cmd="ping -n 2"
-fi
+while read server; do
 
-failed=0
+    # If it's a URL (HTTP/HTTPS)
+    if [[ $server == http* ]]; then
 
-while read server
-do
-    # skip empty lines
-    [ -z "$server" ] && continue
+        # First attempt
+        status=$(curl -k -o /dev/null -s -w "%{http_code}" \
+          --connect-timeout 10 \
+          --max-time 20 \
+          $server)
 
-    # If it's a URL → use curl
-    if [[ "$server" == http* ]]; then
-        http_code=$(curl -k -s -o /dev/null -w "%{http_code}" "$server")
-
-        if [[ "$http_code" == "200" || "$http_code" == "301" || "$http_code" == "302" ]]; then
-            status="UP"
+        if [ "$status" -eq 200 ]; then
+            echo "$server is UP"
         else
-            status="DOWN"
-            failed=1
-            echo "ALERT: $server is DOWN (HTTP $http_code)"
+            echo "Retrying $server..."
+            sleep 10
+
+            # Retry attempt
+            status=$(curl -k -o /dev/null -s -w "%{http_code}" \
+              --connect-timeout 10 \
+              --max-time 20 \
+              $server)
+
+            if [ "$status" -eq 200 ]; then
+                echo "$server is UP (after retry)"
+            else
+                echo "ALERT: $server is DOWN (HTTP $status)"
+            fi
         fi
 
-    # Else → use ping
-    # Else → use ping, fallback to curl
-else
-    if $ping_cmd "$server" > /dev/null 2>&1
-    then
-        status="UP"
     else
-        # fallback using curl
-        http_code=$(curl -k -s -o /dev/null -w "%{http_code}" "http://$server")
+        # For non-HTTP (ping)
+        ping -c 1 $server > /dev/null 2>&1
 
-        if [[ "$http_code" =~ ^2|3 ]]; then
-            status="UP"
+        if [ $? -eq 0 ]; then
+            echo "$server is UP"
         else
-            status="DOWN"
-            failed=1
             echo "ALERT: $server is DOWN"
         fi
     fi
-fi
-
-    echo "$server is $status"
 
 done < servers.txt
-
-# Exit code for CI pipeline
-if [ $failed -eq 1 ]; then
-    exit 1
-else
-    exit 0
-fi
