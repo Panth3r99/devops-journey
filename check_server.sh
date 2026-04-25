@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set +e
+
 echo "Starting server checks..."
 
 while read server; do
