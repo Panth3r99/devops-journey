@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Environment variables (use GitHub Secrets in CI)
-TELEGRAM_TOKEN=${8612525745:AAEwFydlMmO2bqS8lsZYMaAtwWzKecu4B1c}
-CHAT_ID=${5224463283}
+# Read from GitHub Secrets
+TELEGRAM_TOKEN=$TELEGRAM_TOKEN
+CHAT_ID=$CHAT_ID
 
 # Function to send Telegram alert
 send_alert() {
     MESSAGE=$1
     curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
-        -d chat_id=$5224463283 \
+        -d chat_id=$CHAT_ID \
         -d text="$MESSAGE"
 }
 
