@@ -3,45 +3,84 @@ const http = require("http");
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
+
+  // ================= GET (Form Page) =================
   if (req.method === "GET") {
+
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
 
     res.end(`
-      <html>
-        <head>
-          <title>BMI Calculator</title>
-          <style>
-            body {
-              font-family: Arial;
-              text-align: center;
-              margin-top: 50px;
-            }
-            input {
-              padding: 10px;
-              margin: 5px;
-              width: 200px;
-            }
-            button {
-              padding: 10px 20px;
-              margin-top: 10px;
-              cursor: pointer;
-            }
-          </style>
-        </head>
-        <body>
-          <h1>💪 BMI Calculator</h1>
+<html>
+<head>
+  <title>BMI Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-          <form method="POST">
-            <input type="number" step="0.01" name="weight" placeholder="Weight (kg)" required /><br/>
-            <input type="number" step="0.01" name="height" placeholder="Height (meters)" required /><br/>
-            <button type="submit">Calculate BMI</button>
-          </form>
-        </body>
-      </html>
-    `);
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 300px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>💪 BMI Calculator</h1>
+
+    <form method="POST">
+      <input type="number" step="0.01" name="weight" placeholder="Weight (kg)" required />
+      <input type="number" step="0.01" name="height" placeholder="Height (meters)" required />
+      <button type="submit">Calculate BMI</button>
+    </form>
+  </div>
+</body>
+</html>
+`);
   }
 
+  // ================= POST (Result Page) =================
   else if (req.method === "POST") {
+
     let body = "";
 
     req.on("data", chunk => {
@@ -49,6 +88,7 @@ const server = http.createServer((req, res) => {
     });
 
     req.on("end", () => {
+
       const params = new URLSearchParams(body);
 
       const weight = parseFloat(params.get("weight"));
@@ -66,16 +106,56 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
 
       res.end(`
-        <html>
-          <body style="text-align:center; font-family: Arial;">
-            <h1>Your BMI: ${bmi}</h1>
-            <h2>Category: ${category}</h2>
-            <a href="/">🔄 Calculate Again</a>
-          </body>
-        </html>
-      `);
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 300px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: white;
+      background: #667eea;
+      padding: 8px 15px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Your BMI: ${bmi}</h1>
+    <h2>${category}</h2>
+    <a href="/">🔄 Try Again</a>
+  </div>
+</body>
+</html>
+`);
     });
   }
+
 });
 
 server.listen(PORT, () => {
